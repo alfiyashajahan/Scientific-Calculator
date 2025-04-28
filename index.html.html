@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Scientific Calculator</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #dcdcdc;
+      font-family: sans-serif;
+    }
+    .container {
+      background: #fff;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      width: 500px;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+    #display {
+      width: 100%;
+      height: 60px;
+      margin-bottom: 20px;
+      font-size: 26px;
+      text-align: right;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+    }
+    .calculator {
+      display: flex;
+      gap: 10px;
+    }
+    .numbers, .functions {
+      flex: 1;
+      display: grid;
+      gap: 10px;
+    }
+    .numbers {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .functions {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    button {
+      padding: 15px;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      background-color: #f0f0f0;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button.operator {
+      background-color: #4a90e2;
+      color: #fff;
+    }
+    button.equal {
+      background-color: #27ae60;
+      color: #fff;
+      grid-column: span 2;
+    }
+    button.clear {
+      background-color: #e74c3c;
+      color: #fff;
+      grid-column: span 2;
+    }
+    button:hover {
+      background-color: #ddd;
+    }
+    button.operator:hover {
+      background-color: #357ABD;
+    }
+    button.equal:hover {
+      background-color: #219150;
+    }
+    button.clear:hover {
+      background-color: #c0392b;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>CALCULATOR</h1>
+  <input type="text" id="display" disabled>
+  <div class="calculator">
+    <div class="numbers">
+      <button onclick="appendNumber('7')">7</button>
+      <button onclick="appendNumber('8')">8</button>
+      <button onclick="appendNumber('9')">9</button>
+      <button onclick="appendNumber('4')">4</button>
+      <button onclick="appendNumber('5')">5</button>
+      <button onclick="appendNumber('6')">6</button>
+      <button onclick="appendNumber('1')">1</button>
+      <button onclick="appendNumber('2')">2</button>
+      <button onclick="appendNumber('3')">3</button>
+      <button onclick="appendNumber('0')">0</button>
+      <button onclick="appendNumber('.')">.</button>
+      <button class="clear" onclick="clearDisplay()">C</button>
+    </div>
+
+    <div class="functions">
+      <button onclick="applyFunction('sin')">sin</button>
+      <button onclick="applyFunction('cos')">cos</button>
+      <button onclick="applyFunction('tan')">tan</button>
+      <button onclick="applyFunction('log')">log</button>
+      <button onclick="applyFunction('sqrt')">√</button>
+      <button onclick="applyFunction('square')">x²</button>
+      <button onclick="appendConstant(Math.PI)">π</button>
+      <button onclick="appendConstant(Math.E)">e</button>
+      <button class="operator" onclick="setOperator('+')">+</button>
+      <button class="operator" onclick="setOperator('-')">-</button>
+      <button class="operator" onclick="setOperator('*')">×</button>
+      <button class="operator" onclick="setOperator('/')">÷</button>
+      <button class="equal" onclick="calculateResult()">=</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let display = document.getElementById('display');
+  let currentInput = '';
+  let operator = '';
+  let firstOperand = '';
+
+  function appendNumber(num) {
+    currentInput += num;
+    updateDisplay(currentInput);
+  }
+
+  function appendConstant(constant) {
+    currentInput += constant;
+    updateDisplay(currentInput);
+  }
+
+  function setOperator(op) {
+    if (currentInput === '') return;
+    a = parseFloat(currentInput);
+    operator = op;
+    updateDisplay(firstOperand + ' ' + operator);
+    currentInput = '';
+  }
+
+  function calculateResult() {
+    if (currentInput === '' || operator === '') return;
+    let b = parseFloat(currentInput);
+    let result;
+
+    switch (operator) {
+      case '+':
+        result = a + b;
+        break;
+      case '-':
+        result = a - b;
+        break;
+      case '*':
+        result = a * b;
+        break;
+      case '/':
+        result = b !== 0 ? a / b : 'Error';
+        break;
+      default:
+        result = 'Error';
+    }
+
+    updateDisplay(' '+ result);
+    currentInput = result.toString();
+    operator = '';
+    firstOperand = '';
+  }
+
+  function applyFunction(func) {
+    if (currentInput === '') return;
+    let value = parseFloat(currentInput);
+    let result;
+
+    switch (func) {
+      case 'sin':
+        result = Math.sin(toRadians(value));
+        break;
+      case 'cos':
+        result = Math.cos(toRadians(value));
+        break;
+      case 'tan':
+        result = Math.tan(toRadians(value));
+        break;
+      case 'log':
+        result = Math.log10(value);
+        break;
+      case 'sqrt':
+        result = Math.sqrt(value);
+        break;
+      case 'square':
+        result = Math.pow(value, 2);
+        break;
+      default:
+        result = value;
+    }
+
+    updateDisplay(result);
+    currentInput = result.toString();
+  }
+
+  function toRadians(degrees) {
+    return degrees * (Math.PI / 180);
+  }
+
+  function clearDisplay() {
+    currentInput = '';
+    operator = '';
+    firstOperand = '';
+    updateDisplay('');
+  }
+
+  function updateDisplay(value) {
+    display.value = value;
+  }
+</script>
+
+</body>
+</html>
